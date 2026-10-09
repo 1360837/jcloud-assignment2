@@ -1,4 +1,4 @@
-# Week 7 실습 — Process Scheduling (EEVDF)
+# 실습 — Process Scheduling (EEVDF)
 
 **26F 시스템프로그래밍특론 (Advanced System Programming)**
 경북대학교 전자공학부 대학원 · 담당: 이경운 (kwlee87@knu.ac.kr)
@@ -7,22 +7,17 @@
 
 ## 1. 실습 개요
 
-3주차 실습에서는 커널 **모듈**을 작성했다. 이번에는 **커널 자체를 고친다.**
-
-강의에서 EEVDF의 두 축을 배웠다.
-
 - **가중치 `w_i`** (nice에서 옴) — 얼마나 많은 CPU를 받을 것인가
 - **request size `r_i`** (`se->slice`) — 얼마나 빨리 CPU를 받을 것인가
 - 선택 규칙 — **eligible**(`lag >= 0`) 한 것들 중 **가장 이른 virtual deadline**
 
-이 세 가지가 실제로 그렇게 동작하는지 두 번의 커널 수정으로 확인한다.
+이 세 가지가 실제로 그렇게 동작하는지 확인하기 위해 두 번의 커널 수정 수행.
 
 | Lab | 성격 | 고치는 파일 | 배점 |
 |---|---|---|---|
 | **Lab A** | 관찰 — EEVDF 내부 상태를 `/proc/<pid>/sched` 로 꺼낸다 | `kernel/sched/debug.c` | 45 |
 | **Lab B** | 개입 — nice에 따라 request size를 달리 주는 정책을 넣는다 | `fair.c`, `sched.h`, `debug.c` | 45 |
 | 보고서 | 측정 결과 분석 | — | 10 |
-| 심화 | 각 문서의 심화 과제 | — | +10 |
 
 Lab A에서 만든 관찰 도구를 Lab B에서 그대로 재사용한다. **순서대로 진행할 것.**
 
@@ -77,24 +72,6 @@ sudo ./run_labB.sh
 
 ---
 
-## 5. 제출물
-
-`<학번>_<이름>_week7.zip` 으로 LMS에 제출한다.
-
-```
-<학번>_<이름>_week7/
-├── labA.patch              git diff (Lab A)
-├── labB.patch              git diff (Lab B, A 포함 누적도 허용)
-├── out/
-│   ├── before/*.csv
-│   ├── after/*.csv  + plot.png
-│   └── labB.log            run_labB.sh 출력 전체
-├── report.pdf              보고서 (6~10쪽)
-└── screenshots/            uname -r, /proc/<pid>/sched, debugfs 확인 화면
-```
-
-커널 소스 트리 전체는 **제출하지 말 것** (수 GB). 패치만 낸다.
-
 ### 보고서 구성
 
 1. **환경** — 배포판, `uname -r`, vCPU 수, 가상화 도구
@@ -105,27 +82,7 @@ sudo ./run_labB.sh
 
 ---
 
-## 6. 평가 기준
-
-| 항목 | 배점 | 보는 것 |
-|---|---|---|
-| Lab A 동작 | 45 | 세 필드가 정확한 라벨·단위로 나오는가, 락 처리를 했는가 |
-| Lab B 동작 | 45 | 노브가 등록되고 정책이 실제로 slice를 바꾸는가, clamp·`entity_is_task` 가드를 했는가 |
-| 보고서 | 10 | 측정 결과로 주장을 뒷받침하는가 |
-| 심화 | +10 | 선택 |
-
-**감점**
-
-- 빌드 실패 상태로 제출 (−15)
-- 측정 데이터 없이 코드만 제출 (−10)
-- `clamp` / `entity_is_task` 가드 누락 (−5) — 시스템을 멈출 수 있는 코드다
-- 커널 소스 트리 통째로 제출 (−5)
-- 타인의 패치를 그대로 제출 / AI 출력물을 이해 없이 붙여넣기 → **0점**
-  (참고는 허용한다. 단 보고서에 출처를 밝히고, 추가한 모든 줄을 설명할 수 있어야 한다)
-
----
-
-## 7. 자주 막히는 지점
+## 5. 자주 막히는 지점
 
 | 증상 | 해결 |
 |---|---|
@@ -140,7 +97,7 @@ sudo ./run_labB.sh
 
 ---
 
-## 8. 안전 수칙
+## 6. 안전 수칙
 
 - **반드시 VM에서.** 실습 시작 전 스냅샷을 찍을 것
 - 스케줄러 핫 패스(`update_deadline`, `pick_eevdf`)에 **`printk()` 금지**
@@ -149,7 +106,7 @@ sudo ./run_labB.sh
 
 ---
 
-## 9. 참고 자료
+## 7. 참고 자료
 
 - Robert Love, *Linux Kernel Development*, 3rd ed. — Ch.4 Process Scheduling
   (CFS 기준이므로 EEVDF 부분은 강의 슬라이드를 따를 것)
@@ -163,8 +120,3 @@ sudo ./run_labB.sh
 - `man 2 sched_setattr`, `man 7 sched`
 
 ---
-
-## 10. 제출 기한
-
-다음 주 실습 시작 전까지 (구체적 일시는 LMS 공지).
-질문은 **LMS 게시판**에 남기면 다른 수강생에게도 도움이 된다.
