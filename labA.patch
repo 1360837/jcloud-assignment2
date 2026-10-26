@@ -1,0 +1,37 @@
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index 40584b27e..8a4a089c2 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -1423,6 +1423,32 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
+ 	} else if (fair_policy(p->policy)) {
+ 		P(se.slice);
+ 	}
++
++	// TODO A-1
++	PN(se.deadline);
++
++	// TODO A-2
++	P(se.vlag);
++	P(se.custom_slice);
++
++	// TODO A-3
++	{
++		struct rq_flags rf;
++		struct rq *rq;
++		int eligible = -1;
++
++		rq = task_rq_lock(p, &rf);
++
++		if (p->sched_class == &fair_sched_class) {
++			eligible = entity_eligible (
++					cfs_rq_of(&p->se), &p->se);
++		}
++
++		task_rq_unlock(rq, p, &rf);
++
++		__PS("eevdf.eligible", eligible);
++	}
++
+ #ifdef CONFIG_SCHED_CLASS_EXT
+ 	__PS("ext.enabled", task_on_scx(p));
+ #endif
